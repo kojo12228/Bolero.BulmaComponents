@@ -3,14 +3,6 @@ module Bolero.BulmaComponents.Components
 open Bolero
 open Bolero.Html
 
-type Nodeable =
-    abstract member ToNode: unit -> Node
-
-let createNode (nodeable: 'T when 'T :> Nodeable) =
-    nodeable.ToNode()
-
-type ComponentTemplate = Template<"Templates/components.html">
-
 module Breadcrumbs =
     type Aligment =
         | AlignLeft
@@ -57,43 +49,35 @@ module Breadcrumbs =
             Size: Size option
             Items: BreadcrumbItem list
         }
-        interface Nodeable with
+        interface INodeable with
             member this.ToNode() =
-                ComponentTemplate
-                    .Breadcrumb()
-                    .Alignment(
-                        match this.Alignment with
-                        | Some al -> al.ToString()
-                        | None -> ""
+                let breadcrumbClass =
+                    [
+                        Some "breadcrumb"
+                        Option.map (fun x -> x.ToString()) this.Alignment
+                        Option.map (fun x -> x.ToString()) this.Separator
+                        Option.map (fun x -> x.ToString()) this.Size
+                    ]
+                    |> List.choose id
+                    |> String.concat " "
+
+                nav [
+                    attr.``class`` breadcrumbClass
+                ] [
+                    forEach this.Items <| (fun it ->
+                        match it with
+                        | GeneralItem (href, title) ->
+                            li [] [
+                                a [ attr.href href ] [ text title ]
+                            ]
+                        | TailItem (href, title) ->
+                            li [
+                                attr.``class`` "is-active"
+                            ] [
+                                a [ attr.href href ] [ text title ]
+                            ]
                     )
-                    .Separator(
-                        match this.Separator with
-                        | Some sp -> sp.ToString()
-                        | None -> ""
-                    )
-                    .Size(
-                        match this.Separator with
-                        | Some sz -> sz.ToString()
-                        | None -> ""
-                    )
-                    .BreadcrumbItems(
-                        forEach this.Items <| (fun it ->
-                            match it with
-                            | GeneralItem (href, title) ->
-                                ComponentTemplate
-                                    .BreadcrumbItem()
-                                    .Href(href)
-                                    .Title(title)
-                                    .Elt()
-                            | TailItem (href, title) ->
-                                ComponentTemplate
-                                    .BreadcrumbActiveItem()
-                                    .Href(href)
-                                    .Title(title)
-                                    .Elt()
-                        )
-                    )
-                    .Elt()
+                ]
 
     let createBreadcrumb() =
         { 
@@ -121,8 +105,7 @@ module Breadcrumbs =
             [
                 for (title, href) in items ->
                     GeneralItem (href, title)
-            ]
-            |> List.append [ TailItem (href, title) ]
+            ] @ [ TailItem (href, title) ]
 
         { model with Items = List.append itemsModelled model.Items }
 

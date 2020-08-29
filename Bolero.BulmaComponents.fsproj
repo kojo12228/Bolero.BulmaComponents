@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Common.fs" />
     <Compile Include="Columns.fs" />
     <Compile Include="Components.fs" />
     <Compile Include="Elements.fs" />
