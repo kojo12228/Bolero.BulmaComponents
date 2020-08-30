@@ -7,10 +7,10 @@
   <ItemGroup>
     <Compile Include="Common.fs" />
     <Compile Include="Columns.fs" />
-    <Compile Include="Components.fs" />
+    <Compile Include="Layout.fs" />
     <Compile Include="Elements.fs" />
     <Compile Include="Form.fs" />
-    <Compile Include="Layout.fs" />
+    <Compile Include="Components.fs" />
   </ItemGroup>
 
   <ItemGroup>
