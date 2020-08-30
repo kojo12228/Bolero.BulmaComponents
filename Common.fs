@@ -14,6 +14,16 @@ module Option =
 
 [<AutoOpen>]
 module Shared =
+    type Alignment =
+        | AlignLeft
+        | AlignCenter
+        | AlignRight
+        override this.ToString() =
+            match this with
+            | AlignLeft -> ""
+            | AlignCenter -> "is-centered"
+            | AlignRight -> "is-right"
+
     type ComponentColor =
         | White
         | Light

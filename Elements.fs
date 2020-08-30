@@ -184,4 +184,48 @@ module Button =
         |> setTextContent text
         |> createNode
 
-// Button Group
+module ButtonList =
+
+    type ButtonsListModel =
+        {
+            Alignment: Alignment option
+            HasAddons: bool
+            Buttons: Button.ButtonModel seq
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "buttons"
+                        Option.map string this.Alignment
+                        Option.boolMap "has-addons" this.HasAddons
+                    ]
+                    |> List.choose id
+                    |> String.concat " "
+
+                div [
+                    attr.``class`` classes
+                ] [
+                    forEach this.Buttons createNode
+                ]
+
+    let createButtonList buttons =
+        {
+            Alignment = None
+            HasAddons = false
+            Buttons = buttons
+        }
+
+    let createButtonListNode buttons =
+        buttons
+        |> createButtonList
+        |> createNode
+
+    let withAlignment align model =
+        { model with Alignment = align }
+
+    let setHasAddons model =
+        { model with HasAddons = true }
+
+    let addButton button model =
+        { model with Buttons = Seq.append model.Buttons (Seq.singleton button) }

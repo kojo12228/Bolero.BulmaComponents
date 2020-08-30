@@ -4,16 +4,6 @@ open Bolero
 open Bolero.Html
 
 module Breadcrumbs =
-    type Aligment =
-        | AlignLeft
-        | AlignCenter
-        | AlignRight
-        override this.ToString() =
-            match this with
-            | AlignLeft -> ""
-            | AlignCenter -> "is-centered"
-            | AlignRight -> "is-right"
-
     type Separator =
         | Slash
         | Arrow
@@ -44,7 +34,7 @@ module Breadcrumbs =
 
     type BreadcrumbModel =
         {
-            Alignment: Aligment option
+            Alignment: Alignment option
             Separator: Separator option
             Size: Size option
             Items: BreadcrumbItem list
