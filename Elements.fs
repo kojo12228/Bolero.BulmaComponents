@@ -1,5 +1,6 @@
 module Bolero.BulmaComponents.Elements
 
+open System
 open Bolero
 open Bolero.Html
 open Microsoft.AspNetCore.Components.Web
@@ -19,18 +20,6 @@ module Button =
         | ButtonInputSubmit
         | ButtonInputReset
 
-    type Size =
-        | Small
-        | Normal
-        | Medium
-        | Large
-        override this.ToString() =
-            match this with
-            | Small -> "is-small"
-            | Normal -> "is-normal"
-            | Medium -> "is-medium"
-            | Large -> "is-large"
-
     type State =
         | Hover
         | Focus
@@ -48,6 +37,7 @@ module Button =
     type ButtonModel =
         {
             ButtonType: Type
+            Size: Size option
             Color: ComponentColor option
             IsLight: bool
             IsFullWidth: bool
@@ -65,6 +55,7 @@ module Button =
                 let classes =
                     [
                         Some "button"
+                        this.Size |> Option.map (fun x -> x.ToStringWithNormal())
                         Option.map (fun x -> x.ToString()) this.Color
                         Option.boolMap "is-light" this.IsLight
                         Option.boolMap "is-fullwidth" this.IsFullWidth
@@ -81,8 +72,8 @@ module Button =
                     a [
                         attr.``class`` classes
                         attr.disabled (this.IsDisabled)
-                        attr.href (if Option.isSome this.Href then this.Href.Value else null)
-                        on.click (if Option.isSome this.OnClick then this.OnClick.Value else ignore)
+                        attr.href (Option.valOrNull this.Href)
+                        on.click (Option.valOrIgnore this.OnClick)
                     ] [
                         cond this.Content <| function
                         | Some (Text t) -> text t
@@ -92,8 +83,8 @@ module Button =
                 | ButtonBtn ->
                     button [
                         attr.``class`` classes
-                        if this.IsDisabled then attr.disabled()
-                        if Option.isSome this.OnClick then on.click this.OnClick.Value
+                        attr.disabled (this.IsDisabled)
+                        on.click (Option.valOrIgnore this.OnClick)
                     ] [
                         cond this.Content <| function
                         | Some (Text t) -> text t
@@ -105,7 +96,7 @@ module Button =
                         attr.``class`` classes
                         attr.``type`` "submit"
                         attr.disabled (this.IsDisabled)
-                        on.click (if Option.isSome this.OnClick then this.OnClick.Value else ignore)
+                        on.click (Option.valOrIgnore this.OnClick)
                         attr.value (
                             match this.Content with
                             | Some (Text t) -> t
@@ -117,7 +108,7 @@ module Button =
                         attr.``class`` classes
                         attr.``type`` "reset"
                         attr.disabled (this.IsDisabled)
-                        on.click (if Option.isSome this.OnClick then this.OnClick.Value else ignore)
+                        on.click (Option.valOrIgnore this.OnClick)
                         attr.value (
                             match this.Content with
                             | Some (Text t) -> t
@@ -128,6 +119,7 @@ module Button =
     let createButton() =
         {
             ButtonType = ButtonBtn
+            Size = None
             Color = None
             IsLight = false
             IsFullWidth = false
@@ -149,6 +141,8 @@ module Button =
 
     let createFormResetButton() =
         { createButton() with ButtonType = ButtonInputReset }
+
+    let withSize s model = { model with Size = Some s }
 
     let withColor c model = { model with Color = Some c }
 
@@ -239,16 +233,6 @@ module ButtonList =
         { model with Buttons = Seq.append model.Buttons (Seq.singleton button) }
 
 module DeleteButton =
-    type Size =
-        | Small
-        | Medium
-        | Large
-        override this.ToString() =
-            match this with
-            | Small -> "is-small"
-            | Medium -> "is-medium"
-            | Large -> "is-large"
-
     type DeleteModel =
         {
             OnClick: (MouseEventArgs -> unit) option
@@ -259,14 +243,14 @@ module DeleteButton =
                 let classes =
                     [
                         Some "delete"
-                        Option.map string this.Size
+                        this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
                     ]
                     |> List.choose id
                     |> String.concat " "
 
                 button [
                     attr.``class`` "delete"
-                    on.click (if Option.isSome this.OnClick then this.OnClick.Value else ignore)
+                    on.click (Option.valOrIgnore this.OnClick)
                 ] []
 
     let createDelete() =
@@ -353,3 +337,65 @@ module Notification =
         createNotification()
         |> withOnDeleteClick f
         |> withText t
+
+module Progress =
+    type ProgressModel =
+        {
+            Percentage: int option
+            IsIndeterminate: bool
+            Size: Size option
+            Color: ComponentColor option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "progress"
+                        this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
+                        Option.map string this.Color
+                    ]
+                    |> List.choose id
+                    |> String.concat " "
+
+                let percentageSquashed =
+                    this.Percentage
+                    |> Option.map (min 100 >> max 0)
+
+                progress [
+                    attr.``class`` classes
+                    attr.value (
+                        if this.IsIndeterminate
+                        then Nullable()
+                        else Option.valOrNullable percentageSquashed)
+                    attr.max 100 
+                ] [
+                    text (string percentageSquashed + "%")
+                ]
+
+    let createProgress() =
+        {
+            Percentage = None
+            IsIndeterminate = false
+            Size = None
+            Color = None
+        }
+
+    let withPercentage p model =
+        { model with Percentage = Some p }
+
+    let setIndeterminate model =
+        { model with IsIndeterminate = true }
+
+    let setSize s model =
+        { model with Size = Some s }
+
+    let setColor c model =
+        { model with Color = Some c }
+
+    let createBasicIndetProgressNode() =
+        {
+            createProgress() with
+                Percentage = Some 50
+                IsIndeterminate = true
+        }
+        |> createNode

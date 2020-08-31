@@ -1,5 +1,7 @@
 namespace Bolero.BulmaComponents
 
+open System
+
 type INodeable =
     abstract member ToNode: unit -> Bolero.Node
 
@@ -9,8 +11,23 @@ module Utils =
         nodeable.ToNode()
 
 module Option =
-    let boolMap value cond =
+    let internal boolMap value cond =
         if cond then Some value else None
+
+    let internal valOrNull opt =
+        match opt with
+        | Some value -> value
+        | None -> null
+
+    let internal valOrNullable (opt: 'a option) =
+        match opt with
+        | Some nVal -> Nullable(nVal)
+        | None -> Nullable()
+
+    let internal valOrIgnore optFunc =
+        match optFunc with
+        | Some f -> f
+        | None -> ignore
 
 [<AutoOpen>]
 module Shared =
@@ -23,6 +40,25 @@ module Shared =
             | AlignLeft -> ""
             | AlignCenter -> "is-centered"
             | AlignRight -> "is-right"
+
+    type Size =
+        | Small
+        | Normal
+        | Medium
+        | Large
+        member this.ToStringWithNormal() =
+            match this with
+            | Small -> "is-small"
+            | Normal -> "is-normal"
+            | Medium -> "is-medium"
+            | Large -> "is-large"
+
+        member this.ToStringWithoutNormal() =
+            match this with
+            | Small -> "is-small"
+            | Normal -> ""
+            | Medium -> "is-medium"
+            | Large -> "is-large"
 
     type ComponentColor =
         | White

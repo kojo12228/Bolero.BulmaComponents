@@ -31,7 +31,7 @@
   - [ ] [Icon](https://bulma.io/documentation/elements/icon)
   - [ ] [Image](https://bulma.io/documentation/elements/image)
   - [x] [Notification](https://bulma.io/documentation/elements/notification)
-  - [ ] [Progress bars](https://bulma.io/documentation/elements/progress)
+  - [x] [Progress bars](https://bulma.io/documentation/elements/progress)
   - [ ] [Table](https://bulma.io/documentation/elements/table)
   - [ ] [Tag](https://bulma.io/documentation/elements/tag)
   - [ ] [Title](https://bulma.io/documentation/elements/title)

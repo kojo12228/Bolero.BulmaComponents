@@ -20,16 +20,6 @@ module Breadcrumbs =
             | Dot -> "has-dot-separator"
             | Succeeds -> "has-succeeds-separator"
 
-    type Size =
-        | Small
-        | Medium
-        | Large
-        override this.ToString() =
-            match this with
-            | Small -> "is-small"
-            | Medium -> "is-medium"
-            | Large -> "is-large"
-
     type BreadcrumbItem =
         | GeneralItem of href: string * title: string
         | TailItem of href: string * title: string
@@ -46,9 +36,9 @@ module Breadcrumbs =
                 let breadcrumbClass =
                     [
                         Some "breadcrumb"
-                        Option.map (fun x -> x.ToString()) this.Alignment
-                        Option.map (fun x -> x.ToString()) this.Separator
-                        Option.map (fun x -> x.ToString()) this.Size
+                        Option.map string this.Alignment
+                        Option.map string this.Separator
+                        this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
                     ]
                     |> List.choose id
                     |> String.concat " "
@@ -139,7 +129,7 @@ module Navbar =
                 | Link (title, hrefOpt) ->
                     a [
                         attr.``class`` "navbar-item"
-                        attr.href (if Option.isSome hrefOpt then hrefOpt.Value else null)
+                        attr.href (Option.valOrNull hrefOpt)
                     ] [
                         text title
                     ]
@@ -208,7 +198,11 @@ module Navbar =
                             attr.aria "label" "menu"
                             attr.aria "expanded" "false"
                             "data-target" => "navbarmenu"
-                            on.click (match this.Model with | Some f -> f.ToggleFunc | None -> ignore)
+                            on.click (
+                                this.Model
+                                |> Option.map (fun f -> f.ToggleFunc)
+                                |> Option.valOrIgnore
+                            )
                         ] [
                             forEach threeItemList <| (fun _ -> span [ attr.aria "hidden" "true" ] [])
                         ]
@@ -219,6 +213,7 @@ module Navbar =
                         Some "navbar"
                         Option.map colorToString this.Color
                         Option.boolMap "is-transparent" this.IsTransparent
+
                         match this.FixPosition with
                         | Some FixedBottom -> Some "is-fixed-bottom"
                         | Some FixedTop -> Some "is-fixed-top"
@@ -245,20 +240,20 @@ module Navbar =
                     | Some (BrandText (title, hrefOpt)) ->
                         navBrand <| a [
                             attr.``class`` "navbar-item"
-                            attr.href (if Option.isSome hrefOpt then hrefOpt.Value else null)
+                            attr.href (Option.valOrNull hrefOpt)
                         ] [
                             text title
                         ]
                     | Some (BrandImage (src, hrefOpt, widthOpt, heightOpt)) ->
                         navBrand <| a [
                             attr.``class`` "navbar-item"
-                            attr.href (if Option.isSome hrefOpt then hrefOpt.Value else null)
+                            attr.href (Option.valOrNull hrefOpt)
                         ] [
                             img [
                                 attr.src src
-                                attr.href (if Option.isSome hrefOpt then hrefOpt.Value else null)
-                                attr.width (if Option.isSome widthOpt then Nullable(widthOpt.Value) else Nullable())
-                                attr.height (if Option.isSome heightOpt then Nullable(heightOpt.Value) else Nullable())
+                                attr.href (Option.valOrNull hrefOpt)
+                                attr.width (Option.valOrNullable widthOpt)
+                                attr.height (Option.valOrNullable heightOpt)
                             ]
                         ]
                     | Some (BrandCustom c) ->
