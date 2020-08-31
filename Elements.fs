@@ -399,3 +399,152 @@ module Progress =
                 IsIndeterminate = true
         }
         |> createNode
+
+module Tag =
+    type TagModel =
+        {
+            Color: ComponentColor option
+            IsLight: bool
+            Size: Size option
+            IsDelete: bool
+            Delete: DeleteButton.DeleteModel option
+            IsRounded: bool
+            Link: string option
+            Content: Node option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "tag"
+                        Option.map string this.Color
+                        Option.boolMap "is-light" this.IsLight
+                        this.Size |> Option.map (fun x -> x.ToStringWithNormal())
+                        Option.boolMap "is-rounded" this.IsRounded
+                        Option.boolMap "is-delete" this.IsDelete
+                    ]
+                    |> List.choose id
+                    |> String.concat " "
+
+                cond this.Link <| function
+                | Some href ->
+                    a [
+                        attr.``class`` classes
+                        attr.href href
+                    ] [
+                        cond this.Content <| function
+                        | Some n -> n
+                        | None -> empty
+                    ]
+                | None ->
+                    span [
+                        attr.``class`` classes
+                    ] [
+                        cond this.Content <| function
+                        | Some n -> n
+                        | None -> empty
+
+                        cond this.Delete <| function
+                        | Some del -> createNode del
+                        | None -> empty
+                    ]
+
+
+    let private groupSize s =
+        match s with
+        | Small -> "are-small"
+        | Normal -> ""
+        | Medium -> "are-medium"
+        | Large -> "are-large"
+
+    type TagGroupModel =
+        {
+            Tags: TagModel list
+            Size: Size option
+            HasAddons: bool
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "tags"
+                        Option.map groupSize this.Size
+                        Option.boolMap "has-addons" this.HasAddons
+                    ]
+                    |> List.choose id
+
+                div [
+                    attr.``classes`` classes
+                ] [
+                    forEach this.Tags createNode
+                ]
+
+    let createTag() =
+        {
+            Color = None
+            IsLight = false
+            Size = None
+            IsDelete = false
+            Delete = None
+            IsRounded = false
+            Link = None
+            Content = None
+        }
+
+    let withColor c model =
+        { model with Color = Some c }
+
+    let setLight model =
+        { model with IsLight = true }
+
+    let setSize s (model: TagModel) =
+        { model with Size = Some s }
+
+    let setAsDelete model =
+        { model with IsDelete = true }
+
+    let setRounded model =
+        { model with IsRounded = true }
+
+    let withLink href model =
+        { model with Link = Some href }
+
+    let withText t model =
+        { model with Content = Some <| text t }
+
+    let withContent n model =
+        { model with Content = Some n }
+
+    let createTagGroup() =
+        {
+            Tags = []
+            Size = None
+            HasAddons = false
+        }
+
+    let addBasicTag t model =
+        { model with Tags = model.Tags @ [ createTag() |> withText t ] }
+
+    let addTag tag model =
+        { model with Tags = model.Tags @ [ tag ] }
+
+    let setGroupSize s (model: TagGroupModel) =
+        { model with Size = Some s }
+
+    let setAsAddons model = 
+        { model with HasAddons = true }
+
+    let createBasicTagPair (t1, c1) (t2, c2) =
+        createTagGroup()
+        |> addTag (
+            createTag()
+            |> withText t1
+            |> withColor c1
+        )
+        |> addTag (
+            createTag()
+            |> withText t2
+            |> withColor c2
+        )
+        |> setAsAddons
+

@@ -33,7 +33,7 @@
   - [x] [Notification](https://bulma.io/documentation/elements/notification)
   - [x] [Progress bars](https://bulma.io/documentation/elements/progress)
   - [ ] [Table](https://bulma.io/documentation/elements/table)
-  - [ ] [Tag](https://bulma.io/documentation/elements/tag)
+  - [x] [Tag](https://bulma.io/documentation/elements/tag)
   - [ ] [Title](https://bulma.io/documentation/elements/title)
 - [ ] Components
   - [x] [Breadcrumb](https://bulma.io/documentation/components/breadcrumb)
