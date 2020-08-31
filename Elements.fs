@@ -249,7 +249,7 @@ module DeleteButton =
             | Medium -> "is-medium"
             | Large -> "is-large"
 
-    type DeleteNodeModel =
+    type DeleteModel =
         {
             OnClick: (MouseEventArgs -> unit) option
             Size: Size option
@@ -287,3 +287,69 @@ module DeleteButton =
             Size = None
         }
 
+module Notification =
+    type NotificationModel =
+        {
+            ClickDelete: (MouseEventArgs -> unit) option
+            CustomDelete: DeleteButton.DeleteModel option
+            Content: Node
+            IsLight: bool
+            Color: ComponentColor option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "notification"
+                        Option.boolMap "is-light" this.IsLight
+                        Option.map colorToString this.Color
+                    ]
+                    |> List.choose id
+                    |> String.concat " "
+
+                div [
+                    attr.``class`` classes
+                ] [
+                    cond this.CustomDelete <| function
+                    | Some dm -> createNode dm
+                    | None ->
+                        cond this.ClickDelete <| function
+                        | Some f ->
+                            DeleteButton.deleteWithClick f
+                            |> createNode
+                        | None -> empty
+
+                    this.Content
+                ]
+
+    let createNotification() =
+        {
+            ClickDelete = None
+            CustomDelete = None
+            Content = empty
+            IsLight = false
+            Color = None
+        }
+
+    let withOnDeleteClick f model =
+        { model with ClickDelete = Some f }
+
+    let withCustomDelete dm model =
+        { model with CustomDelete = Some dm }
+
+    let withText t model =
+        { model with Content = text t }
+
+    let withContent n model =
+        { model with Content = n }
+
+    let setLight model =
+        { model with IsLight = true }
+
+    let withColor c model =
+        { model with Color = Some c }
+
+    let notificationWithTextAndClick t f =
+        createNotification()
+        |> withOnDeleteClick f
+        |> withText t
