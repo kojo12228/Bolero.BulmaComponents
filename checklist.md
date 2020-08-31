@@ -13,7 +13,7 @@
   - [ ] [Media Object](https://bulma.io/documentation/layout/media-object)
   - [ ] [Hero](https://bulma.io/documentation/layout/hero)
   - [ ] [Section](https://bulma.io/documentation/layout/section)
-  - [ ] [Footer](https://bulma.io/documentation/layout/footer)
+  - [x] [Footer](https://bulma.io/documentation/layout/footer)
   - [ ] [Tiles](https://bulma.io/documentation/layout/tiles)
 - [ ] Form
   - [ ] [General](https://bulma.io/documentation/form/general)
