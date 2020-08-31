@@ -4,6 +4,14 @@ open Bolero
 open Bolero.Html
 open Microsoft.AspNetCore.Components.Web
 
+module Box =
+    let box n =
+        div [
+            attr.``class`` "box"
+        ] [
+            n
+        ]
+
 module Button =
     type Type =
         | ButtonA

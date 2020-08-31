@@ -24,7 +24,7 @@
   - [ ] [Radio](https://bulma.io/documentation/form/radio)
   - [ ] [File](https://bulma.io/documentation/form/file)
 - [ ] Elements
-  - [ ] [Box](https://bulma.io/documentation/elements/box)
+  - [x] [Box](https://bulma.io/documentation/elements/box)
   - [x] [Button](https://bulma.io/documentation/elements/button)
   - [ ] [Content](https://bulma.io/documentation/elements/content)
   - [ ] [Delete](https://bulma.io/documentation/elements/delete)
