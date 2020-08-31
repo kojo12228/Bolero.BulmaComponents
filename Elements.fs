@@ -237,3 +237,53 @@ module ButtonList =
 
     let addButton button model =
         { model with Buttons = Seq.append model.Buttons (Seq.singleton button) }
+
+module DeleteButton =
+    type Size =
+        | Small
+        | Medium
+        | Large
+        override this.ToString() =
+            match this with
+            | Small -> "is-small"
+            | Medium -> "is-medium"
+            | Large -> "is-large"
+
+    type DeleteNodeModel =
+        {
+            OnClick: (MouseEventArgs -> unit) option
+            Size: Size option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "delete"
+                        Option.map string this.Size
+                    ]
+                    |> List.choose id
+                    |> String.concat " "
+
+                button [
+                    attr.``class`` "delete"
+                    on.click (if Option.isSome this.OnClick then this.OnClick.Value else ignore)
+                ] []
+
+    let createDelete() =
+        {
+            OnClick = None
+            Size = None
+        }
+
+    let withOnClick f model =
+        { model with OnClick = Some f }
+
+    let withSize s model =
+        { model with Size = Some s }
+
+    let deleteWithClick f =
+        {
+            OnClick = Some f
+            Size = None
+        }
+
