@@ -26,7 +26,7 @@
 - [ ] Elements
   - [x] [Box](https://bulma.io/documentation/elements/box)
   - [x] [Button](https://bulma.io/documentation/elements/button)
-  - [ ] [Content](https://bulma.io/documentation/elements/content)
+  - [x] [Content](https://bulma.io/documentation/elements/content) _minimal implementation_
   - [x] [Delete](https://bulma.io/documentation/elements/delete)
   - [ ] [Icon](https://bulma.io/documentation/elements/icon)
   - [ ] [Image](https://bulma.io/documentation/elements/image)

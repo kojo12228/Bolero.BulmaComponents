@@ -186,6 +186,10 @@ module Button =
         |> setTextContent text
         |> createNode
 
+module Content =
+    let surroundContent n =
+        div [ attr.``class`` "content" ] [ n ]
+
 module ButtonList =
 
     type ButtonsListModel =
