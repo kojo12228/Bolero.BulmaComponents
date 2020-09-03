@@ -548,3 +548,191 @@ module Tag =
         )
         |> setAsAddons
 
+module Table =
+    type TableModel =
+        {
+            IsBordered: bool
+            IsStriped: bool
+            IsNarrow: bool
+            IsHoverable: bool
+            IsFullWidth: bool
+            IsInContainer: bool
+            IsFirstColumnHeader: bool
+            Header: Choice<string list, Node list> option
+            Body: Choice<string [,], Node [,]>
+            Footer: Choice<string list, Node list> option
+            SelectedRow: int option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let tableClasses =
+                    [
+                        Some "table"
+                        Option.boolMap "is-bordered" this.IsBordered
+                        Option.boolMap "is-striped" this.IsStriped
+                        Option.boolMap "is-narrow" this.IsNarrow
+                        Option.boolMap "is-hoverable" this.IsHoverable
+                        Option.boolMap "is-fullwidth" this.IsFullWidth
+                    ]
+                    |> List.choose id
+
+                let array2dToSeqofSeq (a2d: 'T [,]) =
+                    seq {
+                        for i in 0 .. a2d.GetLength(0) - 1 ->
+                            seq {
+                                for j in 0 .. a2d.GetLength(1) - 1 -> a2d.[i, j]
+                            }
+                    }
+
+                let bodyNode =
+                    let createRows f a2d =
+                        let xss = array2dToSeqofSeq a2d
+
+                        forEach (Seq.indexed xss) <| (fun (i, xs) ->
+                            cond this.IsFirstColumnHeader <| function
+                            | false ->
+                                tr [
+                                    attr.``class`` (
+                                        match this.SelectedRow with
+                                        | Some x when x = i -> "is-selected"
+                                        | _ -> null
+                                    )
+                                ] [
+                                    forEach xs <| (fun x -> td [] [ f x ] )
+                                ]
+                            | true ->
+                                let first = Seq.tryHead xs
+                                let rest = Seq.tail xs
+
+                                tr [
+                                    attr.``class`` (
+                                        match this.SelectedRow with
+                                        | Some x when x = i -> "is-selected"
+                                        | _ -> null
+                                    )
+                                ] [
+                                    cond first <| function
+                                    | Some x -> th [] [ f x ]
+                                    | None -> empty
+
+                                    forEach rest <| (fun x -> td [] [ f x ] )
+                                ]
+                        )
+
+                    tbody [] [
+                        cond this.Body <| function
+                        | Choice1Of2 strBody ->
+                            createRows text strBody
+                        | Choice2Of2 nBody ->
+                            createRows id nBody
+                    ]
+
+                let headerNode =
+                    let createHeader f xs =
+                        thead [] [
+                            tr [] [
+                                forEach xs <| (fun x ->
+                                    th [] [ f x ]
+                                )
+                            ]
+                        ]
+
+                    cond this.Header <| function
+                    | Some (Choice1Of2 strHeaders) ->
+                        createHeader text strHeaders
+                    | Some (Choice2Of2 nHeaders) ->
+                        createHeader id nHeaders
+                    | None -> empty
+
+                let footerNode =
+                    let createFooter f xs =
+                        tfoot [] [
+                            tr [] [
+                                forEach xs <| (fun x ->
+                                    th [] [ f x ]
+                                )
+                            ]
+                        ]
+
+                    cond this.Footer <| function
+                    | Some (Choice1Of2 strFooters) ->
+                        createFooter text strFooters
+                    | Some (Choice2Of2 nFooters) ->
+                        createFooter id nFooters
+                    | None -> empty
+
+                let table =
+                    table [
+                        attr.classes tableClasses
+                    ] [
+                        headerNode
+                        bodyNode
+                        footerNode
+                    ]
+
+                cond this.IsInContainer <| function
+                | true ->
+                    div [
+                        attr.``class`` "table-container"
+                    ] [
+                        table
+                    ]
+                | false ->
+                    table
+
+    let createTable() =
+        {
+            IsBordered = false
+            IsStriped = false
+            IsNarrow = false
+            IsHoverable = false
+            IsFullWidth = false
+            IsInContainer = false
+            IsFirstColumnHeader = false
+            Header = None
+            Body = Choice1Of2 (Array2D.init 0 0 (fun _ _ -> ""))
+            Footer = None
+            SelectedRow = None
+        }
+
+    let setBordered model =
+        { model with IsBordered = true }
+
+    let setStriped model =
+        { model with IsStriped = true }
+
+    let setNarrow model =
+        { model with IsNarrow = true }
+
+    let setHoverable model =
+        { model with IsHoverable = true }
+
+    let setFullWidth model =
+        { model with IsFullWidth = true }
+
+    let setInContainer model =
+        { model with IsInContainer = true }
+
+    let setFirstColumnAsHeader model =
+        { model with IsFirstColumnHeader = true }
+
+    let withBodyText bodyArr model =
+        { model with Body = Choice1Of2 bodyArr }
+
+    let withBodyNode bodyArr model =
+        { model with Body = Choice2Of2 bodyArr }
+
+    let withHeadersText headerArr model =
+        { model with Header = Some <| Choice1Of2 headerArr }
+
+    let withHeadersNode headerArr model =
+        { model with Header = Some <| Choice2Of2 headerArr }
+
+    let withFootersText footerArr model =
+        { model with Footer = Some <| Choice1Of2 footerArr }
+
+    let withFootersNode footerArr model =
+        { model with Footer = Some <| Choice2Of2 footerArr }
+
+    let withSelectedRow rowIndex model =
+        { model with SelectedRow = Some rowIndex }
