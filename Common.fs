@@ -84,3 +84,16 @@ module Shared =
         | Success -> "is-success"
         | Warning -> "is-warning"
         | Danger -> "is-danger"
+
+    let internal textColorToString c =
+        match c with
+        | White -> "has-text-white"
+        | Light -> "has-text-light"
+        | Dark -> "has-text-dark"
+        | Black -> "has-text-black"
+        | Primary -> "has-text-primary"
+        | Link -> "has-text-link"
+        | Info -> "has-text-info"
+        | Success -> "has-text-success"
+        | Warning -> "has-text-warning"
+        | Danger -> "has-text-danger"
