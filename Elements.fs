@@ -776,3 +776,125 @@ module Table =
 
     let withSelectedRow rowIndex model =
         { model with SelectedRow = Some rowIndex }
+
+module Title =
+    type TagType =
+        | P
+        | H1
+        | H2
+        | H3
+        | H4
+        | H5
+        | H6
+
+    let private tagTypeToTag tt =
+        match tt with
+        | P -> p
+        | H1 -> h1
+        | H2 -> h2
+        | H3 -> h3
+        | H4 -> h4
+        | H5 -> h5
+        | H6 -> h6
+
+    type TitleModel =
+        {
+            Type: TagType option
+            IsSubtitle: bool
+            IsSpaced: bool
+            /// Size between 1 and 6 (both inclusive).
+            Size: int option
+            Content: Node option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let sizeMap i =
+                    if i <= 1 then
+                        "is-1"
+                    elif i >= 6 then
+                        "is-6"
+                    else
+                        sprintf "is-%d" i
+
+                let classes =
+                    [
+                        Some (if this.IsSubtitle then "subtitle" else "title")
+                        Option.boolMap "is-spaced" this.IsSpaced
+                        Option.map sizeMap this.Size
+                    ]
+                    |> List.choose id
+
+                let titleNodeWithTag tag =
+                    tag [ attr.classes classes ] [
+                        Option.defaultValue empty this.Content
+                    ]
+
+                cond this.Type <| function
+                | Some P -> titleNodeWithTag p
+                | Some H1 -> titleNodeWithTag h1
+                | Some H2 -> titleNodeWithTag h2
+                | Some H3 -> titleNodeWithTag h3
+                | Some H4 -> titleNodeWithTag h4
+                | Some H5 -> titleNodeWithTag h5
+                | Some H6 -> titleNodeWithTag h6
+                | None -> empty
+
+    let createTitle t =
+        {
+            Type = None
+            IsSubtitle = false
+            IsSpaced = false
+            Size = None
+            Content = Some <| text t
+        }
+
+    let createTitleFromNode n =
+        {
+            Type = None
+            IsSubtitle = false
+            IsSpaced = false
+            Size = None
+            Content = Some n
+        }
+
+    let createSubtitle t =
+        { createTitle t with IsSubtitle = true }
+
+    let createSubtitleFromNode n =
+        { createTitleFromNode n with IsSubtitle = true }
+
+    let withTagType tag model =
+        { model with Type = Some tag }
+
+    let setSpaced model =
+        { model with IsSpaced = true }
+
+    let withSize s model =
+        { model with Size = Some s }
+
+    let private titleWithSize f tag s t =
+        { f t with Type = Some tag; Size = Some s }
+
+    let titleH1 t = titleWithSize createTitle H1 1 t
+
+    let titleH2 t = titleWithSize createTitle H2 2 t
+
+    let titleH3 t = titleWithSize createTitle H3 3 t
+
+    let titleH4 t = titleWithSize createTitle H4 4 t
+
+    let titleH5 t = titleWithSize createTitle H5 5 t
+
+    let titleH6 t = titleWithSize createTitle H6 6 t
+
+    let subtitleH1 t = titleWithSize createSubtitle H1 1 t
+
+    let subtitleH2 t = titleWithSize createSubtitle H2 2 t
+
+    let subtitleH3 t = titleWithSize createSubtitle H3 3 t
+
+    let subtitleH4 t = titleWithSize createSubtitle H4 4 t
+
+    let subtitleH5 t = titleWithSize createSubtitle H5 5 t
+
+    let subtitleH6 t = titleWithSize createSubtitle H6 6 t

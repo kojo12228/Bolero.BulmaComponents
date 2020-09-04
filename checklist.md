@@ -34,7 +34,7 @@
   - [x] [Progress bars](https://bulma.io/documentation/elements/progress)
   - [x] [Table](https://bulma.io/documentation/elements/table)
   - [x] [Tag](https://bulma.io/documentation/elements/tag)
-  - [ ] [Title](https://bulma.io/documentation/elements/title)
+  - [x] [Title](https://bulma.io/documentation/elements/title)
 - [ ] Components
   - [x] [Breadcrumb](https://bulma.io/documentation/components/breadcrumb)
   - [ ] [Card](https://bulma.io/documentation/components/card)
