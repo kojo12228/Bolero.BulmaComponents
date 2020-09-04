@@ -8,7 +8,8 @@
             "command": "dotnet",
             "type": "shell",
             "args": [
-                "build"
+                "build",
+                "src/Bolero.BulmaComponents/Bolero.BulmaComponents.fsproj"
             ],
             "group": {
                 "kind": "build",
