@@ -14,20 +14,14 @@ module Option =
     let internal boolMap value cond =
         if cond then Some value else None
 
-    let internal valOrNull opt =
-        match opt with
-        | Some value -> value
-        | None -> null
+    let internal defaultNull opt =
+        Option.defaultValue null opt
 
-    let internal valOrNullable (opt: 'a option) =
-        match opt with
-        | Some nVal -> Nullable(nVal)
-        | None -> Nullable()
+    let internal defaultNullable (opt: 'a option) =
+        Option.toNullable opt
 
-    let internal valOrIgnore optFunc =
-        match optFunc with
-        | Some f -> f
-        | None -> ignore
+    let internal defaultIgnore optFunc =
+        Option.defaultValue ignore optFunc
 
 [<AutoOpen>]
 module Shared =

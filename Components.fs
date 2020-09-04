@@ -129,7 +129,7 @@ module Navbar =
                 | Link (title, hrefOpt) ->
                     a [
                         attr.``class`` "navbar-item"
-                        attr.href (Option.valOrNull hrefOpt)
+                        attr.href (Option.defaultNull hrefOpt)
                     ] [
                         text title
                     ]
@@ -201,7 +201,7 @@ module Navbar =
                             on.click (
                                 this.Model
                                 |> Option.map (fun f -> f.ToggleFunc)
-                                |> Option.valOrIgnore
+                                |> Option.defaultIgnore
                             )
                         ] [
                             forEach threeItemList <| (fun _ -> span [ attr.aria "hidden" "true" ] [])
@@ -240,20 +240,20 @@ module Navbar =
                     | Some (BrandText (title, hrefOpt)) ->
                         navBrand <| a [
                             attr.``class`` "navbar-item"
-                            attr.href (Option.valOrNull hrefOpt)
+                            attr.href (Option.defaultNull hrefOpt)
                         ] [
                             text title
                         ]
                     | Some (BrandImage (src, hrefOpt, widthOpt, heightOpt)) ->
                         navBrand <| a [
                             attr.``class`` "navbar-item"
-                            attr.href (Option.valOrNull hrefOpt)
+                            attr.href (Option.defaultNull hrefOpt)
                         ] [
                             img [
                                 attr.src src
-                                attr.href (Option.valOrNull hrefOpt)
-                                attr.width (Option.valOrNullable widthOpt)
-                                attr.height (Option.valOrNullable heightOpt)
+                                attr.href (Option.defaultNull hrefOpt)
+                                attr.width (Option.defaultNullable widthOpt)
+                                attr.height (Option.defaultNullable heightOpt)
                             ]
                         ]
                     | Some (BrandCustom c) ->

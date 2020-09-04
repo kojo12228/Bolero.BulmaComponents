@@ -72,8 +72,8 @@ module Button =
                     a [
                         attr.``class`` classes
                         attr.disabled (this.IsDisabled)
-                        attr.href (Option.valOrNull this.Href)
-                        on.click (Option.valOrIgnore this.OnClick)
+                        attr.href (Option.defaultNull this.Href)
+                        on.click (Option.defaultIgnore this.OnClick)
                     ] [
                         cond this.Content <| function
                         | Some (Text t) -> text t
@@ -84,7 +84,7 @@ module Button =
                     button [
                         attr.``class`` classes
                         attr.disabled (this.IsDisabled)
-                        on.click (Option.valOrIgnore this.OnClick)
+                        on.click (Option.defaultIgnore this.OnClick)
                     ] [
                         cond this.Content <| function
                         | Some (Text t) -> text t
@@ -96,7 +96,7 @@ module Button =
                         attr.``class`` classes
                         attr.``type`` "submit"
                         attr.disabled (this.IsDisabled)
-                        on.click (Option.valOrIgnore this.OnClick)
+                        on.click (Option.defaultIgnore this.OnClick)
                         attr.value (
                             match this.Content with
                             | Some (Text t) -> t
@@ -108,7 +108,7 @@ module Button =
                         attr.``class`` classes
                         attr.``type`` "reset"
                         attr.disabled (this.IsDisabled)
-                        on.click (Option.valOrIgnore this.OnClick)
+                        on.click (Option.defaultIgnore this.OnClick)
                         attr.value (
                             match this.Content with
                             | Some (Text t) -> t
@@ -254,7 +254,7 @@ module DeleteButton =
 
                 button [
                     attr.``class`` "delete"
-                    on.click (Option.valOrIgnore this.OnClick)
+                    on.click (Option.defaultIgnore this.OnClick)
                 ] []
 
     let createDelete() =
@@ -406,7 +406,7 @@ module Progress =
                     attr.value (
                         if this.IsIndeterminate
                         then Nullable()
-                        else Option.valOrNullable percentageSquashed)
+                        else Option.defaultNullable percentageSquashed)
                     attr.max 100 
                 ] [
                     text (string percentageSquashed + "%")
