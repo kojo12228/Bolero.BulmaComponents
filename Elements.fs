@@ -275,6 +275,42 @@ module DeleteButton =
             Size = None
         }
 
+module Icon =
+    type IconModel =
+        {
+            Size: Size option
+            Color: ComponentColor option
+            IconClass: string
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "icon"
+                        Option.map textColorToString this.Color
+                        this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
+                    ]
+                    |> List.choose id
+
+                span [
+                    attr.classes classes
+                ] [
+                    i [ attr.``class`` this.IconClass ] []
+                ]
+
+    let createIcon iClass =
+        {
+            Size = None
+            Color = None
+            IconClass = iClass
+        }
+
+    let withColor c model =
+        { model with Color = Some c}
+
+    let withSize s model =
+        { model with Size = Some s }
+
 module Notification =
     type NotificationModel =
         {
