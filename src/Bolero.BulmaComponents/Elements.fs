@@ -799,6 +799,7 @@ module Title =
 
     type TitleModel =
         {
+            Id: string option
             Type: TagType option
             IsSubtitle: bool
             IsSpaced: bool
@@ -825,7 +826,10 @@ module Title =
                     |> List.choose id
 
                 let titleNodeWithTag tag =
-                    tag [ attr.classes classes ] [
+                    tag [
+                        attr.id (Option.defaultNull this.Id)
+                        attr.classes classes
+                    ] [
                         Option.defaultValue empty this.Content
                     ]
 
@@ -841,6 +845,7 @@ module Title =
 
     let createTitle t =
         {
+            Id = None
             Type = None
             IsSubtitle = false
             IsSpaced = false
@@ -850,6 +855,7 @@ module Title =
 
     let createTitleFromNode n =
         {
+            Id = None
             Type = None
             IsSubtitle = false
             IsSpaced = false
@@ -862,6 +868,9 @@ module Title =
 
     let createSubtitleFromNode n =
         { createTitleFromNode n with IsSubtitle = true }
+
+    let withId id model =
+        { model with Id = Some id }
 
     let withTagType tag model =
         { model with Type = Some tag }
