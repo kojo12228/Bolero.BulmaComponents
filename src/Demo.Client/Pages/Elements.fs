@@ -10,9 +10,15 @@ open Bolero.BulmaComponents.Elements
 
 open Demo.Client.Common.DocSection
 
-type Model = unit
+type Model =
+    {
+        buttonClickMsg: string option
+    }
 
-let initModel = ()
+let initModel =
+    {
+        buttonClickMsg = None
+    }
 
 let titleIdMap =
     [
@@ -29,10 +35,14 @@ let titleIdMap =
     ]
     |> Map.ofList
 
-type Message = unit
+type Message =
+    | ExampleButtonClicked
 
 let update message model =
-    (), Cmd.none
+    match message with
+    | ExampleButtonClicked ->
+        { model with buttonClickMsg = Some "Button click event registered" }, Cmd.none
+
 
 let private elementsNamespace m =
     sprintf "Bolero.BulmaComponents.Elements.%s" m
@@ -41,24 +51,68 @@ let private documentationLink el =
     sprintf "https://bulma.io/documentation/elements/%s" el
 
 let private viewBox() =
+    let content =
+        concat [
+            Content.surroundContent (
+                p [] [
+                    text "A simple box to surround other components."
+                ]
+            )
+
+            Box.box (
+                text "Example box"
+            )
+
+            fsCodeBlock [ "Box.box (text \"Example bbox\")" ]
+        ]
+
     {
         Title = "Box"
         TitleIdMap = titleIdMap
         NamespaceSubtitle = elementsNamespace "Box"
         DocButtonText = "Box documentation"
         DocButtonHref = documentationLink "box"
-        Content = empty
+        Content = content
     }
     |> createNode
 
-let viewButton() =
+let viewButton model dispatch =
+    let content =
+        concat [
+            Content.surroundContent (
+                p [] [
+                    text "A styled button, with a click event"
+                ]
+            )
+
+            Button.createButton()
+            |> Button.setTextContent "Example button"
+            |> Button.withColor Success
+            |> Button.setRounded
+            |> Button.setOnClick (fun _ -> dispatch ExampleButtonClicked)
+            |> createNode
+
+            cond model.buttonClickMsg <| function
+            | None -> empty
+            | Some msg -> Content.surroundContent <| p [] [ strong [] [ text msg ] ]
+
+            fsCodeBlock [
+                "Button.createButton()"
+                "|> Button.setTextContent \"Example button\""
+                "|> Button.withColor Success"
+                "|> Button.setRounded"
+                "|> Button.setOnClick (fun _ -> dispatch ExampleButtonClicked)"
+                "|> createNode"
+            ]
+        ]
+
     {
         Title = "Button"
         TitleIdMap = titleIdMap
         NamespaceSubtitle = elementsNamespace "Button"
         DocButtonText = "Button documentation"
         DocButtonHref = documentationLink "button"
-        Content = empty
+        Content = content
     }
     |> createNode
 
@@ -156,7 +210,7 @@ let view model dispatch =
         |> createNode
 
         viewBox()
-        viewButton()
+        viewButton model dispatch
         viewButtonList()
         viewContent()
         viewDeleteButton()

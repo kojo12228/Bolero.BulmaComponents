@@ -119,10 +119,10 @@ let view model dispatch =
                 cond model.page <| function
                 | Home -> homePage model dispatch
                 | Columns -> Columns.view model.pageModels.columns (ColumnsMessage >> dispatch)
-                | Layout -> Layout.view model.pageModels.columns (LayoutMessage >> dispatch)
-                | Form -> Form.view model.pageModels.columns (FormMessage >> dispatch)
-                | Elements -> Elements.view model.pageModels.columns (ElementsMessage >> dispatch)
-                | Components -> Components.view model.pageModels.columns (ComponentsMessage >> dispatch)
+                | Layout -> Layout.view model.pageModels.layout (LayoutMessage >> dispatch)
+                | Form -> Form.view model.pageModels.form (FormMessage >> dispatch)
+                | Elements -> Elements.view model.pageModels.elements (ElementsMessage >> dispatch)
+                | Components -> Components.view model.pageModels.components (ComponentsMessage >> dispatch)
             ]
         ]
     ]

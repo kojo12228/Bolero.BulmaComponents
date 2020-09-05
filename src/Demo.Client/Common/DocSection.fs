@@ -33,3 +33,11 @@ type DocSectionModel =
                 |> Button.withColor Primary
                 |> createNode
             ]
+
+let fsCodeBlock lines =
+    Content.surroundContent
+    <|pre [] [
+        code [ attr.``class`` "language-fsharp" ] [
+            text (String.concat "\n" lines)
+        ]
+    ]
