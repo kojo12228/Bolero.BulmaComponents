@@ -120,7 +120,7 @@ module Navbar =
 
     type NavbarItem =
         | Link of title: string * href: string option
-        | Dropdown of title: string * NavbarItem list * DropdownOptions
+        | Dropdown of title: string * href: string option * NavbarItem list * DropdownOptions
         | Divider
         | Custom of Node
         interface INodeable with
@@ -133,7 +133,7 @@ module Navbar =
                     ] [
                         text title
                     ]
-                | Dropdown (title, subItems, options) ->
+                | Dropdown (title, hrefOpt, subItems, options) ->
                     let navItemClasses =
                         "navbar-item has-dropdown is-hoverable"
                     let dropdownClasses =
@@ -149,7 +149,10 @@ module Navbar =
                     div [
                         attr.``class`` navItemClasses
                     ] [
-                        a [ attr.``class`` "navbar-link" ] [ text title ]
+                        a [
+                            attr.``class`` "navbar-link"
+                            attr.href (Option.defaultNull hrefOpt)
+                        ] [ text title ]
                         div [ attr.``class`` dropdownClasses ] [
                             forEach subItems createNode
                         ]

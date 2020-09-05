@@ -56,7 +56,7 @@ module Button =
                     [
                         Some "button"
                         this.Size |> Option.map (fun x -> x.ToStringWithNormal())
-                        Option.map (fun x -> x.ToString()) this.Color
+                        Option.map colorToString this.Color
                         Option.boolMap "is-light" this.IsLight
                         Option.boolMap "is-fullwidth" this.IsFullWidth
                         Option.boolMap "is-outlined" this.IsOutlined
@@ -186,10 +186,6 @@ module Button =
         |> setTextContent text
         |> createNode
 
-module Content =
-    let surroundContent n =
-        div [ attr.``class`` "content" ] [ n ]
-
 module ButtonList =
 
     type ButtonsListModel =
@@ -235,6 +231,10 @@ module ButtonList =
 
     let addButton button model =
         { model with Buttons = Seq.append model.Buttons (Seq.singleton button) }
+
+module Content =
+    let surroundContent n =
+        div [ attr.``class`` "content" ] [ n ]
 
 module DeleteButton =
     type DeleteModel =
