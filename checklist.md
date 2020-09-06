@@ -29,7 +29,7 @@
   - [x] [Content](https://bulma.io/documentation/elements/content) _minimal implementation_
   - [x] [Delete](https://bulma.io/documentation/elements/delete)
   - [x] [Icon](https://bulma.io/documentation/elements/icon)
-  - [ ] [Image](https://bulma.io/documentation/elements/image)
+  - [x] [Image](https://bulma.io/documentation/elements/image)
   - [x] [Notification](https://bulma.io/documentation/elements/notification)
   - [x] [Progress bars](https://bulma.io/documentation/elements/progress)
   - [x] [Table](https://bulma.io/documentation/elements/table)

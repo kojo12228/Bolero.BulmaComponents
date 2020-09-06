@@ -310,6 +310,148 @@ module Icon =
     let withSize s model =
         { model with Size = Some s }
 
+module Image =
+    type ImageSize =
+        | Size16
+        | Size24
+        | Size32
+        | Size48
+        | Size64
+        | Size96
+        | Size128
+        override this.ToString() =
+            match this with
+            | Size16 -> 16
+            | Size24 -> 24
+            | Size32 -> 32
+            | Size48 -> 48
+            | Size64 -> 64
+            | Size96 -> 96
+            | Size128 -> 128
+            |> fun x -> sprintf "is-%dx%d" x x
+
+    type Ratio =
+        | Square
+        | OneByOne
+        | FiveByFour
+        | FourByThree
+        | ThreeByTwo
+        | FiveByThree
+        | SixteenByNine
+        | TwoByOne
+        | ThreeByOne
+        | FourByFive
+        | ThreeByFour
+        | TwoByThree
+        | ThreeByFive
+        | NineBySixteen
+        | OneByTwo
+        | OneByThree
+        override this.ToString() =
+            match this with
+            | Square -> "square"
+            | OneByOne -> "1by1"
+            | FiveByFour -> "5by4"
+            | FourByThree -> "4by3"
+            | ThreeByTwo -> "3by2"
+            | FiveByThree -> "5by3"
+            | SixteenByNine -> "16by9"
+            | TwoByOne -> "2by1"
+            | ThreeByOne -> "3by1"
+            | FourByFive -> "4by5"
+            | ThreeByFour -> "3by4"
+            | TwoByThree -> "2by3"
+            | ThreeByFive -> "3by5"
+            | NineBySixteen -> "9by16"
+            | OneByTwo -> "1by2"
+            | OneByThree -> "1by3"
+            |> sprintf "is-%s"
+
+    type ImageModelImg =
+        {
+            Size: ImageSize option
+            Ratio: Ratio option
+            IsFullWidth: bool
+            IsRounded: bool
+            Src: string option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "image"
+                        Option.map string this.Size
+                        Option.map string this.Ratio
+                        Option.boolMap "is-fullwidth" this.IsFullWidth
+                    ]
+                    |> List.choose id
+
+                figure [
+                    attr.classes classes
+                ] [
+                    img [
+                        attr.``class`` (
+                            if this.IsRounded
+                            then "is-rounded"
+                            else null
+                        )
+                        attr.src (Option.defaultNull this.Src)
+                    ]
+                ]
+
+    type ImageModelOther =
+        {
+            Ratio: Ratio option
+            IsFullWidth: bool
+            /// One of the classes of the image should be
+            /// "has-ratio"
+            Content: Node option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "image"
+                        Option.map string this.Ratio
+                        Option.boolMap "is-fullwidth" this.IsFullWidth
+                    ]
+                    |> List.choose id
+
+                figure [
+                    attr.classes classes
+                ] [
+                    cond this.Content <| function
+                    | Some n -> n
+                    | None -> empty
+                ]
+
+    let createImage src =
+        {
+            Size = None
+            Ratio = None
+            IsFullWidth = false
+            IsRounded = false
+            Src = Some src
+        }
+
+    let withRatio r (model: ImageModelImg) =
+        { model with Ratio = Some r }
+
+    let withSize s model =
+        { model with Size = Some s }
+
+    let setFullWidth (model: ImageModelImg) =
+        { model with IsFullWidth = true }
+
+    let setRounded model =
+        { model with IsRounded = true }
+
+    let withRatioOther r (model: ImageModelOther) =
+        { model with Ratio = Some r}
+
+    let setFullWidthOther (model: ImageModelOther) =
+        { model with IsFullWidth = true }
+
 module Notification =
     type NotificationModel =
         {
