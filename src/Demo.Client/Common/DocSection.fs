@@ -28,7 +28,14 @@ type DocSectionModel =
                 this.Content
 
                 Button.createButtonA()
-                |> Button.setTextContent this.DocButtonText
+                |> Button.setNodeContent (
+                    concat [
+                        Icon.createIcon "fas fa-book-open"
+                        |> createNode
+
+                        span [] [ text this.DocButtonText ]
+                    ]
+                )
                 |> Button.setHref this.DocButtonHref
                 |> Button.withColor Primary
                 |> createNode

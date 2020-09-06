@@ -250,10 +250,9 @@ module DeleteButton =
                         this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
                     ]
                     |> List.choose id
-                    |> String.concat " "
 
                 button [
-                    attr.``class`` "delete"
+                    attr.classes classes
                     on.click (Option.defaultIgnore this.OnClick)
                 ] []
 
@@ -392,7 +391,7 @@ module Progress =
                     [
                         Some "progress"
                         this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
-                        Option.map string this.Color
+                        Option.map colorToString this.Color
                     ]
                     |> List.choose id
                     |> String.concat " "
