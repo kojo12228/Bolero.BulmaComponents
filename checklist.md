@@ -1,12 +1,12 @@
 # Conversion Checklist
 
 - [ ] Columns
-  - [ ] [Basics](https://bulma.io/documentation/columns/basics)
-  - [ ] [Sizes](https://bulma.io/documentation/columns/sizes)
-  - [ ] [Responsiveness](https://bulma.io/documentation/columns/responsiveness)
-  - [ ] [Nesting](https://bulma.io/documentation/columns/nesting)
-  - [ ] [Gap](https://bulma.io/documentation/columns/gap)
-  - [ ] [Options](https://bulma.io/documentation/columns/options)
+  - [x] [Basics](https://bulma.io/documentation/columns/basics)
+  - [x] [Sizes](https://bulma.io/documentation/columns/sizes)
+  - [x] [Responsiveness](https://bulma.io/documentation/columns/responsiveness)
+  - [x] [Nesting](https://bulma.io/documentation/columns/nesting)
+  - [x] [Gap](https://bulma.io/documentation/columns/gap)
+  - [x] [Options](https://bulma.io/documentation/columns/options)
 - [ ] Layout
   - [ ] [Container](https://bulma.io/documentation/layout/container)
   - [ ] [Level](https://bulma.io/documentation/layout/level)
@@ -23,7 +23,7 @@
   - [ ] [Checkbox](https://bulma.io/documentation/form/checkbox)
   - [ ] [Radio](https://bulma.io/documentation/form/radio)
   - [ ] [File](https://bulma.io/documentation/form/file)
-- [ ] Elements
+- [x] Elements
   - [x] [Box](https://bulma.io/documentation/elements/box)
   - [x] [Button](https://bulma.io/documentation/elements/button)
   - [x] [Content](https://bulma.io/documentation/elements/content) _minimal implementation_
