@@ -228,6 +228,8 @@ type ColumnsModel =
         IsDesktop: bool
         IsGapless: bool
         IsMultiline: bool
+        IsVCentered: bool
+        IsCentered: bool
         // Variable gaps requires CSS Variables support
         IsVariable: Choice<VariableGapSize, BreakpointModel<VariableGapSize>> option
     }
@@ -250,6 +252,8 @@ type ColumnsModel =
                     Option.boolMap "is-gapless" this.IsGapless
                     Option.boolMap "is-multiline" this.IsMultiline
                     Option.boolMap "is-variable" this.IsVariable.IsSome
+                    Option.boolMap "is-vcentered" this.IsVCentered
+                    Option.boolMap "is-centered" this.IsVCentered
                 ]
                 |> List.append (
                     this.IsVariable
@@ -329,6 +333,8 @@ let emptyColumns() =
         IsDesktop = false
         IsGapless = false
         IsMultiline = false
+        IsVCentered = false
+        IsCentered = false
         IsVariable = None
     }
 
@@ -349,6 +355,12 @@ let setGapless model =
 
 let setMultiline model =
     { model with IsMultiline = true }
+
+let setVCentered model =
+    { model with IsVCentered = true }
+
+let setCentered model =
+    { model with IsCentered = true }
 
 let setVariable gap model =
     { model with IsVariable = Some <| Choice1Of2 gap }
