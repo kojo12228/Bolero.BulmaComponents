@@ -4,6 +4,7 @@ open Bolero
 open Bolero.Html
 
 type Breakpoint =
+    | Normal
     | Mobile
     | Tablet
     | Touch
@@ -12,6 +13,7 @@ type Breakpoint =
     | FullHD
     override this.ToString() =
         match this with
+        | Normal -> ""
         | Mobile -> "mobile"
         | Tablet -> "tablet"
         | Touch -> "touch"
@@ -21,6 +23,7 @@ type Breakpoint =
 
 type BreakpointModel<'T> =
     {
+        Normal: 'T option
         Mobile: 'T option
         Tablet: 'T option
         Touch: 'T option
@@ -31,6 +34,7 @@ type BreakpointModel<'T> =
 
 let private defaultBpModel =
     {
+        Normal = None
         Mobile = None
         Tablet = None
         Touch = None
@@ -39,14 +43,15 @@ let private defaultBpModel =
         FullHD = None
     }
 
-let breakpointsToStrings (bps: BreakpointModel<'T>) =
+let inline breakpointsToStrings (bps: BreakpointModel<'T>) =
     [
-        Option.map (sprintf "%A-mobile") bps.Mobile
-        Option.map (sprintf "%A-tablet") bps.Tablet
-        Option.map (sprintf "%A-touch") bps.Touch
-        Option.map (sprintf "%A-desktop") bps.Desktop
-        Option.map (sprintf "%A-widescreen") bps.Widescreen
-        Option.map (sprintf "%A-fullhd") bps.FullHD
+        Option.map (string) bps.Normal
+        Option.map (string >> sprintf "%s-mobile") bps.Mobile
+        Option.map (string >> sprintf "%s-tablet") bps.Tablet
+        Option.map (string >> sprintf "%s-touch") bps.Touch
+        Option.map (string >> sprintf "%s-desktop") bps.Desktop
+        Option.map (string >> sprintf "%s-widescreen") bps.Widescreen
+        Option.map (string >> sprintf "%s-fullhd") bps.FullHD
     ]
 
 type ColumnSize =
@@ -176,19 +181,20 @@ type ColumnModel =
 
             let classes =
                 [
-                    Some "column"
-                    Option.map string this.Offset
-                ]
-                |> List.append (
+                    [
+                        Some "column"
+                        Option.map string this.Offset
+                    ]
+
                     this.Sizes
                     |> Option.map sizeToString
                     |> Option.defaultValue []
-                )
-                |> List.append (
+                    
                     this.Narrow
                     |> Option.map narrowString
                     |> Option.defaultValue []
-                )
+                ]
+                |> List.concat
                 |> List.choose id
 
             div [
@@ -223,7 +229,7 @@ type VariableGapSize =
 
 type ColumnsModel =
     {
-        Columns: ColumnsModel list
+        Columns: ColumnModel list
         IsMobile: bool
         IsDesktop: bool
         IsGapless: bool
@@ -246,20 +252,22 @@ type ColumnsModel =
 
             let classes =
                 [
-                    Some "columns"
-                    Option.boolMap "is-mobile" this.IsMobile
-                    Option.boolMap "is-desktop" this.IsDesktop
-                    Option.boolMap "is-gapless" this.IsGapless
-                    Option.boolMap "is-multiline" this.IsMultiline
-                    Option.boolMap "is-variable" this.IsVariable.IsSome
-                    Option.boolMap "is-vcentered" this.IsVCentered
-                    Option.boolMap "is-centered" this.IsVCentered
-                ]
-                |> List.append (
+                    [
+                        Some "columns"
+                        Option.boolMap "is-mobile" this.IsMobile
+                        Option.boolMap "is-desktop" this.IsDesktop
+                        Option.boolMap "is-gapless" this.IsGapless
+                        Option.boolMap "is-multiline" this.IsMultiline
+                        Option.boolMap "is-variable" this.IsVariable.IsSome
+                        Option.boolMap "is-vcentered" this.IsVCentered
+                        Option.boolMap "is-centered" this.IsVCentered
+                    ]
+
                     this.IsVariable
                     |> Option.map variableStrings
                     |> Option.defaultValue []
-                )
+                ]
+                |> List.concat
                 |> List.choose id
 
             div [
@@ -293,6 +301,7 @@ let withBreakpointSize s bp model =
             let bpm = breakpointModel model.Sizes
             let newBpm =
                 match bp with
+                | Normal -> { bpm with Normal = Some s }
                 | Mobile -> { bpm with Mobile = Some s }
                 | Tablet -> { bpm with Tablet = Some s }
                 | Touch -> { bpm with Touch = Some s }
@@ -316,6 +325,7 @@ let setNarrowBreakpoint bp model =
             let narrowStr = Some "is-narrow"
             let newBpm =
                 match bp with
+                | Normal -> { bpm with Normal = narrowStr }
                 | Mobile -> { bpm with Mobile = narrowStr }
                 | Tablet -> { bpm with Tablet = narrowStr }
                 | Touch -> { bpm with Touch = narrowStr }
@@ -371,6 +381,7 @@ let setVariableBreakpoint gap bp model =
             let bpm = breakpointModel model.IsVariable
             let newBpm =
                 match bp with
+                | Normal -> { bpm with Normal = Some gap }
                 | Mobile -> { bpm with Mobile = Some gap }
                 | Tablet -> { bpm with Tablet = Some gap }
                 | Touch -> { bpm with Touch = Some gap }
