@@ -193,6 +193,78 @@ module MediaObject =
             MediaRight = Some right
         }
 
+module Hero =
+    type HeroSize =
+        | Medium
+        | Large
+        | FullHeight
+        | FullHeightNavbar
+        override this.ToString() =
+            match this with
+            | Medium -> "is-medium"
+            | Large -> "is-large"
+            | FullHeight -> "is-fullheight"
+            | FullHeightNavbar -> "is-fullheight-with-navbar"
+
+    type HeroModel =
+        {
+            Color: ComponentColor option
+            Size: HeroSize option
+            IsBold: bool
+            Head: Node option
+            Body: Node
+            Foot: Node option
+        }
+        interface INodeable with
+            member this.ToNode() =
+                let classes =
+                    [
+                        Some "hero"
+                        Option.map string this.Size
+                        Option.map colorToString this.Color
+                        Option.boolMap "is-bold" this.IsBold
+                    ]
+                    |> List.choose id
+
+                section [
+                    attr.classes classes
+                ] [
+                    cond this.Head <| function
+                    | None -> empty
+                    | Some n -> div [ attr.``class`` "hero-head" ] [ n ]
+
+                    div [ attr.``class`` "hero-body" ] [ this.Body ]
+
+                    cond this.Foot <| function
+                    | None -> empty
+                    | Some n -> div [ attr.``class`` "hero-foot" ] [ n ]
+                ]
+
+    let createHero n =
+        {
+            Color = None
+            Size = None
+            IsBold = false
+            Head = None
+            Body = n
+            Foot = None
+        }
+
+    let withHead n model =
+        { model with Head = Some n }
+
+    let withFoot n model =
+        { model with Foot = Some n }
+
+    let withColor c model =
+        { model with Color = Some c }
+
+    let withSize s model =
+        { model with Size = Some s }
+
+    let setBold model =
+        { model with IsBold = true }
+
 module Footer =
     type FooterModel =
         {
