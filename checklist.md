@@ -12,9 +12,9 @@
   - [x] [Level](https://bulma.io/documentation/layout/level)
   - [x] [Media Object](https://bulma.io/documentation/layout/media-object)
   - [x] [Hero](https://bulma.io/documentation/layout/hero)
-  - [ ] [Section](https://bulma.io/documentation/layout/section)
+  - [x] [Section](https://bulma.io/documentation/layout/section)
   - [x] [Footer](https://bulma.io/documentation/layout/footer)
-  - [ ] [Tiles](https://bulma.io/documentation/layout/tiles)
+  - [x] [Tiles](https://bulma.io/documentation/layout/tiles)
 - [ ] Form
   - [ ] [General](https://bulma.io/documentation/form/general)
   - [ ] [Input](https://bulma.io/documentation/form/input)

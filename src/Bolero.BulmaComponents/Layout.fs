@@ -265,6 +265,30 @@ module Hero =
     let setBold model =
         { model with IsBold = true }
 
+module Section =
+    let sectionNode n =
+        section [ attr.``class`` "section" ] [ n ]
+
+    let mediumSectionNode n =
+        section [
+            attr.classes [
+                "section"
+                "is-medium"
+            ]
+        ] [
+            n
+        ]
+
+    let largeSectionNode n =
+        section [
+            attr.classes [
+                "section"
+                "is-medium"
+            ]
+        ] [
+            n
+        ]
+
 module Footer =
     type FooterModel =
         {
@@ -296,3 +320,127 @@ module Footer =
         |> withText t
         |> createNode
 
+module Tile =
+    type Size =
+        | Tile1
+        | Tile2
+        | Tile3
+        | Tile4
+        | Tile5
+        | Tile6
+        | Tile7
+        | Tile8
+        | Tile9
+        | Tile10
+        | Tile11
+        | Tile12
+        override this.ToString() =
+            match this with
+            | Tile1 -> "is-1"
+            | Tile2 -> "is-2"
+            | Tile3 -> "is-3"
+            | Tile4 -> "is-4"
+            | Tile5 -> "is-5"
+            | Tile6 -> "is-6"
+            | Tile7 -> "is-7"
+            | Tile8 -> "is-8"
+            | Tile9 -> "is-9"
+            | Tile10 -> "is-10"
+            | Tile11 -> "is-11"
+            | Tile12 -> "is-12"
+
+    type TileChild =
+        {
+            Classes: string list
+            Content: Node
+        }
+        interface INodeable with
+            member this.ToNode() =
+                article [
+                    attr.classes (["tile"; "is-child"] @ this.Classes)
+                ] [
+                    this.Content
+                ]
+
+    let tileChild n =
+        {
+            Classes = []
+            Content = n
+        }
+
+    let tileChildWithClasses classes n =
+        {
+            Classes = classes
+            Content = n
+        }
+
+    type TileParent =
+        {
+            Children: TileChild list
+            IsVerticle: bool
+            Size: Size option
+        }
+
+    let createTileParent() =
+        {
+            Children = []
+            IsVerticle = false
+            Size = None
+        }
+
+    let addChild c model =
+        { model with Children = model.Children @ [c] }
+
+    let addChildren children model =
+        { model with Children = model.Children @ children }
+
+    type TileTree =
+        | Tile of {| children: TileTree list; isVerticle: bool; size: Size option |}
+        | TileParent of {| children: TileChild list; isVerticle: bool; size: Size option |}
+        interface INodeable with
+            member this.ToNode() =
+                cond this <| function
+                | Tile model ->
+                    let classes =
+                        [
+                            Some "tile"
+                            Option.boolMap "is-vertical" model.isVerticle
+                            Option.map string model.size
+                        ]
+                        |> List.choose id
+
+                    div [
+                        attr.classes classes
+                    ] [
+                        forEach model.children createNode
+                    ]
+                | TileParent model ->
+                    let classes =
+                        [
+                            Some "tile"
+                            Some "is-parent"
+                            Option.boolMap "is-vertical" model.isVerticle
+                            Option.map string model.size
+                        ]
+                        |> List.choose id
+
+                    div [
+                        attr.classes classes
+                    ] [
+                        forEach model.children createNode
+                    ]
+
+    type TileAncestorModel =
+        {
+            Model: TileTree list
+        }
+        interface INodeable with
+            member this.ToNode() =
+                div [
+                    attr.classes [ "tile"; "is-ancestor" ]
+                ] [
+                    forEach this.Model createNode
+                ]
+
+    let createTileRoot children =
+        { Model = children }
