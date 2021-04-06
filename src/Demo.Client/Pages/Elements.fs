@@ -47,7 +47,13 @@ type Message =
 let update message model =
     match message with
     | ExampleButtonClicked ->
-        { model with buttonClickMsg = Some "Button click event registered" }, Cmd.none
+        {
+            model with
+                buttonClickMsg =
+                    match model.buttonClickMsg with
+                    | None -> Some "Button click event registered"
+                    | Some _ -> None
+        }, Cmd.none
     | ButtonListClicked msg ->
         { model with buttonListClickMsg = Some msg }, Cmd.none
     | DeleteClicked ->

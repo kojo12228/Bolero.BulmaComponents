@@ -41,10 +41,9 @@ module Breadcrumbs =
                         this.Size |> Option.map (fun x -> x.ToStringWithoutNormal())
                     ]
                     |> List.choose id
-                    |> String.concat " "
 
                 nav [
-                    attr.``class`` breadcrumbClass
+                    attr.classes breadcrumbClass
                 ] [
                     forEach this.Items <| (fun it ->
                         match it with
